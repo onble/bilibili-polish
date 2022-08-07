@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.7
 // @description  try to take over the world!
 // @author       You
 // @match        https://www.bilibili.com/*
@@ -61,13 +61,17 @@ function stop_single_page_continuously_play() {
 }
 function del_video_page_special_card() {
     // 这个函数用来去除三个在视频页面的广告
-    //隐藏右下角推荐视频列表第一个广告
-    let ad = document.querySelector(".video-page-special-card");
-    if (ad) {
-        ad.style.display = "none";
-    }
     // 右下角的广告应该也是和Vue相关联，所以使用样式进行禁止显示
+    // 依次为
+    // 右下角视频推荐第一个
+    // 右下角推荐视频的后面大广告
+    // 右边栏最后的直播
+    // 弹幕下面的小广告
+    // 弹幕下面的大广告
     GM_addStyle(`
+    .video-page-special-card {
+        display: none;
+    }
     #right-bottom-banner {
         display: none;
     }
@@ -102,6 +106,18 @@ function clean_top_nav() {
     // 清理搜素框中的热搜
     GM_addStyle(`
     .trending {
+        display: none;
+    }
+    `);
+    // 清理右边的大会员
+    GM_addStyle(`
+    .user-con.signin>div:nth-child(2) {
+        display: none;
+    }
+    `);
+    // 清理创作中心与投稿
+    GM_addStyle(`
+    .user-con.signin>div:nth-child(7) {
         display: none;
     }
     `);
