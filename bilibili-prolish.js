@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  try to take over the world!
 // @author       You
 // @match        https://www.bilibili.com/*
+// @match        https://space.bilibili.com/*
 // @icon         https://static.thenounproject.com/png/3355755-200.png
 // @grant        GM_addStyle
 // @run-at document-start
@@ -121,6 +122,12 @@ function clean_top_nav() {
         display: none;
     }
     `);
+    //清除小红点
+    GM_addStyle(`
+    div.num {
+        display: none;
+    }
+    `);
 }
 function new_clean_top_nav() {
     // 这个是对B站新版网页进行清理上面的导航栏
@@ -148,7 +155,11 @@ function display_charge_button() {
     display_charge_button();
     const oldOnload = window.onload;
     window.onload = function () {
-        oldOnload();
+        // 这里面放晚加载的函数
+        if (oldOnload) {
+            oldOnload();
+        }
+
         stretch_collection();
         stop_single_page_continuously_play();
     };
