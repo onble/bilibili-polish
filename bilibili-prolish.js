@@ -11,15 +11,39 @@
 // @run-at document-start
 // ==/UserScript==
 
+function stretch_vodeo_choose_list() {
+    const video_list = document.querySelector(".list-box");
+    if (!video_list) {
+        console.log("--->没有找到视频选集<---");
+    }
+    //选中下面的推荐视频列表
+    const recommend_list = document.querySelector("#reco_list");
+    // 查找需求的最大高度
+    const need_height = video_list.scrollHeight;
+    // 计算可扩展高度
+    let expandable_height = window.innerHeight - recommend_list.offsetTop + 340; // TODO: 340是推测的数据，需要再验证
+    if (expandable_height > need_height) {
+        expandable_height = need_height; // 如果可以扩展的空间大于需求，则根据需求大小进行扩展
+    }
+    console.log("video_list.childElementCount", video_list.childElementCount);
+    GM_addStyle(`
+        .cur-list>ul{
+                height: ${expandable_height}px !important;
+                max-height: none !important;
+        }`);
+}
 function stretch_collection() {
     // 这个函数的作用是控制视频合集列表的的高度，列表数量多时候，使列表高度的底部到屏幕底端，少的时候根据列表数量弹性增长
     //选中选集列表
+    // TODO: 对视频选集进行适配https://www.bilibili.com/video/BV1G54y1j7zv
     const collection_list = document.querySelector(
         "div.video-sections-content-list"
     );
     if (!collection_list) {
         //这一页没有列表元素
         console.log("--->这一页没有列表元素<---");
+        // 此时找不到合集列表，找找有没有视频选集
+        stretch_vodeo_choose_list();
         return;
     }
     //选中下面的推荐视频列表
@@ -30,7 +54,6 @@ function stretch_collection() {
         recommend_list.offsetTop +
         parseInt(collection_list.style.height);
     //下面是对合集较少的时候进行处理
-    const temp = document.querySelector("div.video-section-list.section-0");
     // 有个常数6是推测的
     const list_actual_height =
         document.querySelector("div.video-section-list.section-0")
@@ -68,6 +91,7 @@ function del_video_page_special_card() {
     // 右下角推荐视频的后面大广告
     // 右边栏最后的直播
     // 弹幕下面的小广告
+    // 弹幕下面的新增加的小广告
     // 弹幕下面的大广告
     GM_addStyle(`
     .video-page-special-card {
@@ -80,6 +104,9 @@ function del_video_page_special_card() {
         display: none;
     }
     #slide_ad {
+        display: none;
+    }
+    .video-ad-creative-card{
         display: none;
     }
     .ad-report{
