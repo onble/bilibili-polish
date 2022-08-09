@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      0.8
+// @version      0.9
 // @description  try to take over the world!
-// @author       You
+// @author       onble
 // @match        https://www.bilibili.com/*
 // @match        https://space.bilibili.com/*
 // @icon         https://static.thenounproject.com/png/3355755-200.png
@@ -15,6 +15,7 @@ function stretch_vodeo_choose_list() {
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
         console.log("--->没有找到视频选集<---");
+        return;
     }
     //选中下面的推荐视频列表
     const recommend_list = document.querySelector("#reco_list");
