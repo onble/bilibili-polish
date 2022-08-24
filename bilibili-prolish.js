@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      0.9.1
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -10,13 +10,13 @@
 // @grant        GM_addStyle
 // @run-at document-start
 // ==/UserScript==
-
 function stretch_vodeo_choose_list() {
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
         console.log("--->没有找到视频选集<---");
         return;
     }
+    console.log("--->找到了视频选集<---");
     //选中下面的推荐视频列表
     const recommend_list = document.querySelector("#reco_list");
     // 查找需求的最大高度
@@ -26,7 +26,7 @@ function stretch_vodeo_choose_list() {
     if (expandable_height > need_height) {
         expandable_height = need_height; // 如果可以扩展的空间大于需求，则根据需求大小进行扩展
     }
-    console.log("video_list.childElementCount", video_list.childElementCount);
+    // console.log("video_list.childElementCount", video_list.childElementCount);
     GM_addStyle(`
         .cur-list>ul{
                 height: ${expandable_height}px !important;
@@ -36,7 +36,6 @@ function stretch_vodeo_choose_list() {
 function stretch_collection() {
     // 这个函数的作用是控制视频合集列表的的高度，列表数量多时候，使列表高度的底部到屏幕底端，少的时候根据列表数量弹性增长
     //选中选集列表
-    // TODO: 对视频选集进行适配https://www.bilibili.com/video/BV1G54y1j7zv
     const collection_list = document.querySelector(
         "div.video-sections-content-list"
     );
@@ -47,6 +46,7 @@ function stretch_collection() {
         stretch_vodeo_choose_list();
         return;
     }
+    console.log("--->找到了视频列表元素<---");
     //选中下面的推荐视频列表
     const recommend_list = document.querySelector("#reco_list");
     // 计算可扩展高度
@@ -54,6 +54,10 @@ function stretch_collection() {
         window.innerHeight -
         recommend_list.offsetTop +
         parseInt(collection_list.style.height);
+    if (window.isNaN(expandable_height)) {
+        expandable_height = window.innerHeight - recommend_list.offsetTop + 243;
+        console.log("--->行内样式没有写height,所以按照243赋值<---");
+    }
     //下面是对合集较少的时候进行处理
     // 有个常数6是推测的
     const list_actual_height =
