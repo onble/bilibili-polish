@@ -10,13 +10,19 @@
 // @grant        GM_addStyle
 // @run-at document-start
 // ==/UserScript==
+var check = true;
+function check_console(msg) {
+    if (check) {
+        console.log(`--->${msg}<---`);
+    }
+}
 function stretch_vodeo_choose_list() {
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
-        console.log("--->没有找到视频选集<---");
+        check_console("没有找到视频选集");
         return;
     }
-    console.log("--->找到了视频选集<---");
+    check_console("找到了视频选集");
     //选中下面的推荐视频列表
     const recommend_list = document.querySelector("#reco_list");
     // 查找需求的最大高度
@@ -41,12 +47,13 @@ function stretch_collection() {
     );
     if (!collection_list) {
         //这一页没有列表元素
-        console.log("--->这一页没有列表元素<---");
+        check_console("这一页没有列表元素");
         // 此时找不到合集列表，找找有没有视频选集
         stretch_vodeo_choose_list();
         return;
     }
-    console.log("--->找到了视频列表元素<---");
+    check_console("找到了视频列表元素");
+    // 主要对 https://www.bilibili.com/video/BV17z4y1X7UZ 这样的页面进行适配
     //选中下面的推荐视频列表
     const recommend_list = document.querySelector("#reco_list");
     // 计算可扩展高度
@@ -56,7 +63,7 @@ function stretch_collection() {
         parseInt(collection_list.style.height);
     if (window.isNaN(expandable_height)) {
         expandable_height = window.innerHeight - recommend_list.offsetTop + 243;
-        console.log("--->行内样式没有写height,所以按照243赋值<---");
+        check_console("行内样式没有写height,所以按照243赋值");
     }
     //下面是对合集较少的时候进行处理
     // 有个常数6是推测的
