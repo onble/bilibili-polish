@@ -11,12 +11,17 @@
 // @run-at document-start
 // ==/UserScript==
 var check = true;
+
 function check_console(msg) {
     if (check) {
         console.log(`--->${msg}<---`);
     }
 }
+
 function stretch_vodeo_choose_list() {
+    // 伸展视频选集列表(带图片的列表)
+
+    //TODO:该函数似乎完全停止工作，需要重写
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
         check_console("没有找到视频选集");
@@ -41,10 +46,9 @@ function stretch_vodeo_choose_list() {
 }
 function stretch_collection() {
     // 这个函数的作用是控制视频合集列表的的高度，列表数量多时候，使列表高度的底部到屏幕底端，少的时候根据列表数量弹性增长
+
     //选中选集列表
-    const collection_list = document.querySelector(
-        "div.video-sections-content-list"
-    );
+    const collection_list = document.querySelector("div.cur-list");
     if (!collection_list) {
         //这一页没有列表元素
         check_console("这一页没有列表元素");
@@ -62,19 +66,18 @@ function stretch_collection() {
         recommend_list.offsetTop +
         parseInt(collection_list.style.height);
     if (window.isNaN(expandable_height)) {
-        expandable_height = window.innerHeight - recommend_list.offsetTop + 243;
-        check_console("行内样式没有写height,所以按照243赋值");
+        expandable_height = window.innerHeight - recommend_list.offsetTop + 285;
+        check_console("行内样式没有写height,所以按照285赋值");
     }
     //下面是对合集较少的时候进行处理
     // 有个常数6是推测的
     const list_actual_height =
-        document.querySelector("div.video-section-list.section-0")
-            .scrollHeight + 6;
+        document.querySelector("ul.list-box").scrollHeight + 6;
     if (expandable_height > list_actual_height) {
         expandable_height = list_actual_height;
     }
     GM_addStyle(`
-    div.video-sections-content-list{
+    div.cur-list{
         height: ${expandable_height}px !important;
         max-height: none !important;
     }
@@ -82,7 +85,7 @@ function stretch_collection() {
 }
 function stop_single_page_continuously_play() {
     // 这个函数的作用是停止单视频的自动连播，这样不影响合集视频的自动连播
-    // 原来的判断是否是单视频的逻辑有问题，被弃用
+
     // 监听视频播放完毕
     const elevideo = document.querySelector("video");
     elevideo.addEventListener("ended", function () {
@@ -97,9 +100,12 @@ function stop_single_page_continuously_play() {
 }
 function del_video_page_special_card() {
     // 这个函数用来去除三个在视频页面的广告
+
+    //TODO:需要将封禁功能进一步提取封装，单独提取各个广告的选择器，然后使用一个函数专门清除元素
     // 右下角的广告应该也是和Vue相关联，所以使用样式进行禁止显示
     // 依次为
     // 右下角视频推荐第一个
+    // 右下角视频推荐第一个小的
     // 右下角推荐视频的后面大广告
     // 右边栏最后的直播
     // 弹幕下面的小广告
@@ -107,6 +113,9 @@ function del_video_page_special_card() {
     // 弹幕下面的大广告
     GM_addStyle(`
     .video-page-special-card {
+        display: none;
+    }
+    .video-page-special-card-small{
         display: none;
     }
     #right-bottom-banner {
@@ -138,7 +147,7 @@ function clean_top_nav() {
     `);
     // 然后清理搜素框
     GM_addStyle(`
-    #nav_searchform>input::placeholder {
+    #nav-searchform>div.nav-search-content>input::placeholder {
         color: rgba(0,0,0,0);
     }
     `);
