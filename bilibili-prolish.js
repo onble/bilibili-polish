@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      0.9.1
+// @version      1.0.0
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -17,11 +17,29 @@ function check_console(msg) {
         console.log(`--->${msg}<---`);
     }
 }
+function clear_object(object) {
+    // 清理需要被清理的对象
+
+    if (object.other_css !== undefined) {
+        console.log(object.other_css);
+        GM_addStyle(`
+        ${object.select} {
+            display: none !important;
+            ${object.other_css}
+        }
+        `);
+        return;
+    }
+    GM_addStyle(`
+    ${object.select} {
+        display: none !important;
+    }
+    `);
+}
 
 function stretch_vodeo_choose_list() {
     // 伸展视频选集列表(带图片的列表)
 
-    //TODO:该函数似乎完全停止工作，需要重写
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
         check_console("没有找到视频选集");
@@ -37,7 +55,6 @@ function stretch_vodeo_choose_list() {
     if (expandable_height > need_height) {
         expandable_height = need_height; // 如果可以扩展的空间大于需求，则根据需求大小进行扩展
     }
-    // console.log("video_list.childElementCount", video_list.childElementCount);
     GM_addStyle(`
         .cur-list>ul{
                 height: ${expandable_height}px !important;
@@ -275,8 +292,8 @@ function change_video_below_toolbar() {
         document.querySelector("div.note-btn.note-btn__blue");
     });
 }
-(function () {
-    "use strict";
+function video_page() {
+    // 在video页面进行的操作
 
     clean_top_nav();
     del_video_page_special_card();
@@ -285,7 +302,6 @@ function change_video_below_toolbar() {
     display_charge_button();
     display_bottom_fixed_comment();
     display_right_bottom_customer_service();
-    display_charge_button();
     widen_list_scrollbar_width();
     video_box_add_box_shadow();
     display_share_new_box();
@@ -300,4 +316,61 @@ function change_video_below_toolbar() {
         // change_video_below_toolbar();
         stop_single_page_continuously_play();
     };
+}
+function space_page() {
+    // 空间页面进行的操作
+
+    // 清理最上面的导航栏
+    const need_clear_objects = [
+        {
+            select: "ul.nav-link-ul>li:not(:nth-child(1))",
+            name: "顶部左边番剧直播等入口",
+        },
+        {
+            select: "form#nav_searchform>input::placeholder",
+            name: "搜索栏的默认提示文字",
+            other_css: "color: rgba(0,0,0,0);",
+        },
+        {
+            select: "div.trending",
+            name: "搜索提示框内的热搜",
+        },
+        {
+            select: "div.item div.num",
+            name: "动态的红点",
+        },
+        {
+            select: "div.user-con>div.item:nth-child(2)",
+            name: "大会员入口",
+        },
+        {
+            select: "div.user-con>div.item:nth-child(7)",
+            name: "创作中心入口",
+        },
+        {
+            select: "div.nav-user-center>div:last-child",
+            name: "投稿按钮",
+        },
+    ];
+    need_clear_objects.forEach((Element) => {
+        clear_object(Element);
+    });
+
+    const oldOnload = window.onload;
+    window.onload = function () {
+        // 这里面放晚加载的函数
+        if (oldOnload) {
+            oldOnload();
+        }
+    };
+}
+(function () {
+    "use strict";
+
+    if (location.pathname.indexOf("video") != -1) {
+        video_page();
+    }
+    if (location.host.indexOf("space") != -1) {
+        space_page();
+    }
 })();
