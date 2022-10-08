@@ -136,12 +136,12 @@ function del_video_page_special_card() {
     `);
 }
 function clean_top_nav() {
+    // 清理顶部导航栏
+
     // 因为顶部导航栏的一些功能不常用，所以进行清理
-    // 注意：这个函数现在是基于旧版只有文字的网页进行清理
-    // 两个不同的版本，在进行style样式设置时候冲突不大
     // 首先清理用不到的垃圾入口
     GM_addStyle(`
-    .nav-link-ul>li:not(:nth-child(1)) {
+    .left-entry>li:not(:nth-child(1)) {
         display: none;
     }
     `);
@@ -160,47 +160,135 @@ function clean_top_nav() {
     `);
     // 清理右边的大会员
     GM_addStyle(`
-    .user-con.signin>div:nth-child(2) {
+    .right-entry>li:nth-child(2) {
         display: none;
     }
     `);
     // 清理创作中心与投稿
     GM_addStyle(`
-    .user-con.signin>div:nth-child(7) {
-        display: none;
+    .right-entry-item {
+        display: none  !important;
     }
     `);
     //清除小红点
     GM_addStyle(`
-    div.num {
+    div.red-num--dynamic {
         display: none;
     }
     `);
 }
-function new_clean_top_nav() {
-    // 这个是对B站新版网页进行清理上面的导航栏
+function display_bottom_fixed_comment() {
+    // 隐藏下面粘性定位在下面的发表评论功能
+
     GM_addStyle(`
-    .left-entry>li:not(:nth-child(1)) {
+    div.fixed-reply-box {
         display: none;
+    }
+    `);
+}
+function display_right_bottom_customer_service() {
+    // 隐藏下面迷你播放右边的客服入口
+
+    GM_addStyle(`
+    .nav-menu>a:nth-child(2) {
+        display: none;
+    }
+    `);
+}
+function video_box_add_box_shadow() {
+    // 给播放器和下面的控制弹幕盒子加一个重阴影，将将两者关联起来
+
+    GM_addStyle(`
+    div#bilibili-player {
+        box-shadow: 2px -1px 10px 4px rgb(150 150 150 / 50%);
     }
     `);
 }
 function display_charge_button() {
+    // 隐藏充电按钮
+
     GM_addStyle(`
     div[report-id="charge"] {
         display: none !important;
     }
     `);
 }
+function widen_list_scrollbar_width(width = 7) {
+    // 拓宽右边列表右侧的滑动块的宽度
+
+    GM_addStyle(`
+    div.cur-list::-webkit-scrollbar {
+        width: ${width}px;
+    }
+    `);
+}
+function display_share_new_box() {
+    // 隐藏当鼠标hover在分享按钮上出现的新box
+
+    GM_addStyle(`
+    div.share_dropdown {
+        display: none;
+    }
+    `);
+}
+function change_video_below_toolbar() {
+    // TODO:这个函数的功能需要等待vue配合，该函数咱不可用
+    // 更改视频下面的工具栏的显示布局
+    return;
+
+    // 将稿件投诉与记笔记移动到more栏目下
+    // 获取ul对象
+    const box = document.querySelector("div.toolbar-right");
+    box.addEventListener("mouseover", function create_li(event) {
+        const ul_more = document.querySelector("ul.more_dropdown");
+        if (ul_more == null) {
+            // ul还没有被创建,无法找到
+            return;
+        }
+        // 创建记笔记对象
+        const take_notes = document.createElement("li");
+        take_notes.innerHTML = `
+        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.75 10C6.75 9.58579 7.08579 9.25 7.5 9.25H16.5C16.9142 9.25 17.25 9.58579 17.25 10C17.25 10.4142 16.9142 10.75 16.5 10.75H7.5C7.08579 10.75 6.75 10.4142 6.75 10Z"></path>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.75 14C6.75 13.5858 7.08579 13.25 7.5 13.25H13C13.4142 13.25 13.75 13.5858 13.75 14C13.75 14.4142 13.4142 14.75 13 14.75H7.5C7.08579 14.75 6.75 14.4142 6.75 14Z"></path>
+            <path d="M12 5.25C9.48998 5.25 7.29811 5.3777 5.75109 5.50315C4.79223 5.58091 4.05407 6.31053 3.96899 7.25687C3.85555 8.51874 3.75 10.1822 3.75 12C3.75 13.8178 3.85555 15.4813 3.96899 16.7431C4.05408 17.6895 4.79214 18.4191 5.75095 18.4968C7.17292 18.6122 9.14013 18.7294 11.3987 18.7476C11.951 18.752 12.3951 19.2033 12.3906 19.7556C12.3862 20.3079 11.9349 20.752 11.3826 20.7475C9.06584 20.7289 7.04905 20.6087 5.58929 20.4903C3.67182 20.3348 2.15034 18.8499 1.97703 16.9222C1.8597 15.6172 1.75 13.892 1.75 12C1.75 10.108 1.8597 8.38283 1.97703 7.07779C2.15034 5.15 3.67203 3.66518 5.58944 3.50969C7.17721 3.38094 9.42438 3.25 12 3.25C14.5759 3.25 16.8232 3.38096 18.411 3.50973C20.3281 3.6652 21.8497 5.14946 22.0231 7.07716C22.1127 8.07392 22.1977 9.31512 22.233 10.6888C22.2471 11.2409 21.811 11.6999 21.2589 11.7141C20.7068 11.7282 20.2478 11.2921 20.2336 10.74C20.1997 9.41683 20.1177 8.21901 20.0311 7.25626C19.946 6.31026 19.2081 5.58094 18.2494 5.50319C16.7023 5.37772 14.5103 5.25 12 5.25Z" fill-rule="evenodd" clip-rule="evenodd"></path>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.2557 13.3102C19.0368 12.5292 20.3031 12.5292 21.0841 13.3102L22.4983 14.7244C23.2794 15.5055 23.2794 16.7718 22.4983 17.5528L18.5486 21.5026C18.1735 21.8777 17.6648 22.0884 17.1344 22.0884L15.0702 22.0884C14.3246 22.0884 13.7202 21.484 13.7202 20.7384V18.6742C13.7202 18.1437 13.9309 17.635 14.306 17.26L18.2557 13.3102ZM21.0841 16.1386L19.6699 14.7244L15.7202 18.6742L15.7202 20.0884L17.1344 20.0884L21.0841 16.1386Z"></path>
+        </svg>记笔记
+        `;
+        take_notes.classList.add("note-btn");
+        take_notes.classList.add("note-btn__blue");
+        // 给记笔记增加点击事件
+        take_notes.addEventListener("click", function () {
+            // 更改笔记盒子的display
+            // 获取笔记的盒子
+            // 这个直接改样式的方法行不通
+            // const write_notes_box = document.querySelector("div.bili-note");
+            // write_notes_box.style.display = "";
+        });
+        ul_more.appendChild(take_notes);
+        // 创建li对象
+        const li = document.createElement("li");
+        li.innerHTML = `稿件投诉`;
+        ul_more.appendChild(li);
+        // 移除增加元素的事件，防止重复增加事件
+        box.removeEventListener("mouseover", create_li);
+        document.querySelector("div.note-btn.note-btn__blue");
+    });
+}
 (function () {
     "use strict";
 
     clean_top_nav();
-    new_clean_top_nav();
     del_video_page_special_card();
     // 因为上面的清理广告函数会影响右边栏目的高度，所以要注意这个函数与stretch_collection函数的先后顺序
 
     display_charge_button();
+    display_bottom_fixed_comment();
+    display_right_bottom_customer_service();
+    display_charge_button();
+    widen_list_scrollbar_width();
+    video_box_add_box_shadow();
+    display_share_new_box();
     const oldOnload = window.onload;
     window.onload = function () {
         // 这里面放晚加载的函数
@@ -209,6 +297,7 @@ function display_charge_button() {
         }
 
         stretch_collection();
+        // change_video_below_toolbar();
         stop_single_page_continuously_play();
     };
 })();
