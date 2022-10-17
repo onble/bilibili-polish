@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -39,6 +39,8 @@ function clear_object(object) {
 
 function stretch_vodeo_choose_list() {
     // 伸展视频选集列表(带图片的列表)
+    // https://www.bilibili.com/video/BV1Mb4y1p74R/
+    // TODO:检查适配上面的函数
 
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
@@ -116,7 +118,7 @@ function stop_single_page_continuously_play() {
     });
 }
 function del_video_page_special_card() {
-    // 这个函数用来去除三个在视频页面的广告
+    // 这个函数用来去除在视频页面的广告
 
     //TODO:需要将封禁功能进一步提取封装，单独提取各个广告的选择器，然后使用一个函数专门清除元素
     // 右下角的广告应该也是和Vue相关联，所以使用样式进行禁止显示
@@ -151,6 +153,15 @@ function del_video_page_special_card() {
         display: none !important;
     }
     `);
+    const adv_object = [
+        {
+            select: "div.reply-notice",
+            name: "评论区上面的黄色推广栏，例如：凡人修仙传热播中",
+        },
+    ];
+    adv_object.forEach((element) => {
+        clear_object(element);
+    });
 }
 function clean_top_nav() {
     // 清理顶部导航栏
@@ -317,6 +328,58 @@ function video_page() {
         stop_single_page_continuously_play();
     };
 }
+function medialist_page() {
+    // 在medialist页面进行的操作
+
+    // 清理最上面的导航栏
+    const need_clear_objects = [
+        {
+            select: "ul.nav-link-ul>li:not(:nth-child(1))",
+            name: "顶部左边番剧直播等入口",
+        },
+        {
+            select: "form#nav_searchform>input::placeholder",
+            name: "搜索栏的默认提示文字",
+            other_css: "color: rgba(0,0,0,0);",
+        },
+        {
+            select: "div.trending",
+            name: "搜索提示框内的热搜",
+        },
+        {
+            select: "div.item div.num",
+            name: "动态的红点",
+        },
+        {
+            select: "div.user-con>div.item:nth-child(2)",
+            name: "大会员入口",
+        },
+        {
+            select: "div.user-con>div.item:nth-child(7)",
+            name: "创作中心入口",
+        },
+        {
+            select: "div.nav-user-center>div:last-child",
+            name: "投稿按钮",
+        },
+        {
+            select: "div.comment-send-lite",
+            name: "底下粘性固定在最下方的发表评论",
+        },
+        {
+            select: "div.share-box",
+            name: "当鼠标hover在分享按钮上出现的新box",
+        },
+    ];
+    need_clear_objects.forEach((Element) => {
+        clear_object(Element);
+    });
+    del_video_page_special_card();
+    // 因为上面的清理广告函数会影响右边栏目的高度，所以要注意这个函数与stretch_collection函数的先后顺序
+
+    display_charge_button();
+    video_box_add_box_shadow();
+}
 function space_page() {
     // 空间页面进行的操作
 
@@ -372,5 +435,9 @@ function space_page() {
     }
     if (location.host.indexOf("space") != -1) {
         space_page();
+    }
+    if (location.pathname.indexOf("medialist") != -1) {
+        medialist_page();
+        console.log("--->test");
     }
 })();
