@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -37,6 +37,46 @@ function clear_object(object) {
     `);
 }
 
+function stretch_collection_vodeo_list() {
+    // 伸延合集
+    // 适配目标案例: https://www.bilibili.com/video/BV1jT4y117Tn/
+    // 适配目标案例2： https://www.bilibili.com/video/BV1s64y187Vh
+    const video_list = document.querySelector("div.video-sections-item");
+    if (!video_list) {
+        check_console("没有找到合集");
+        return;
+    }
+    check_console("找到了合集");
+    //选中下面的推荐视频列表
+    const recommend_list = document.querySelector("#reco_list");
+    // 获取recomend_list的开了position的父元素
+    const recommend_list_position_father = document.querySelector(
+        "div.right-container"
+    );
+    // 获取当前盒子本身的元素
+    const video_list_box = document.querySelector(
+        "div.video-sections-content-list"
+    );
+    let video_list_box_height = parseInt(video_list_box.style.height);
+    console.log("video_list_box_height", video_list_box_height);
+    if (window.isNaN(video_list_box_height)) {
+        video_list_box_height = 243; //243是推测的
+    }
+    // TODO:查找需求的最大高度
+
+    // 计算可扩展高度
+    let expandable_height =
+        window.innerHeight -
+        recommend_list.offsetTop -
+        recommend_list_position_father.offsetTop +
+        video_list_box_height;
+
+    GM_addStyle(`
+        div.video-sections-content-list{
+                height: ${expandable_height}px !important;
+                max-height: none !important;
+        }`);
+}
 function stretch_vodeo_choose_list() {
     // 伸展视频选集列表(带图片的列表)
     // https://www.bilibili.com/video/BV1Mb4y1p74R/
@@ -45,6 +85,7 @@ function stretch_vodeo_choose_list() {
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
         check_console("没有找到视频选集");
+        stretch_collection_vodeo_list();
         return;
     }
     check_console("找到了视频选集");
@@ -107,6 +148,10 @@ function stop_single_page_continuously_play() {
 
     // 监听视频播放完毕
     const elevideo = document.querySelector("video");
+    if (elevideo === null) {
+        check_console("没有找到停止连播的按钮");
+        return;
+    }
     elevideo.addEventListener("ended", function () {
         const cancel_continuously_play_button = document.querySelector(
             ".bpx-player-ending-related-item-cancel"
@@ -305,6 +350,8 @@ function change_video_below_toolbar() {
 }
 function video_page() {
     // 在video页面进行的操作
+    // 适配案例 https://www.bilibili.com/video/BV16a411d72j/
+    // 不适配的案例 https://www.bilibili.com/video/BV1QP4y1x7ro/
 
     clean_top_nav();
     del_video_page_special_card();
@@ -330,6 +377,7 @@ function video_page() {
 }
 function medialist_page() {
     // 在medialist页面进行的操作
+    // 适配案例 https://www.bilibili.com/medialist/play/1712395
 
     // 清理最上面的导航栏
     const need_clear_objects = [
@@ -382,6 +430,7 @@ function medialist_page() {
 }
 function space_page() {
     // 空间页面进行的操作
+    // 适配目标案例 https://space.bilibili.com/157023201
 
     // 清理最上面的导航栏
     const need_clear_objects = [
@@ -438,6 +487,5 @@ function space_page() {
     }
     if (location.pathname.indexOf("medialist") != -1) {
         medialist_page();
-        console.log("--->test");
     }
 })();
