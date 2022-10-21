@@ -10,8 +10,11 @@
 // @grant        GM_addStyle
 // @run-at document-start
 // ==/UserScript==
+
+// 控制参数
 var check = true;
 
+// 工具函数
 function check_console(msg) {
     if (check) {
         console.log(`--->${msg}<---`);
@@ -79,8 +82,6 @@ function stretch_collection_vodeo_list() {
 }
 function stretch_vodeo_choose_list() {
     // 伸展视频选集列表(带图片的列表)
-    // https://www.bilibili.com/video/BV1Mb4y1p74R/
-    // TODO:检查适配上面的函数
 
     const video_list = document.querySelector(".list-box");
     if (!video_list) {
@@ -291,6 +292,13 @@ function widen_list_scrollbar_width(width = 7) {
 
     GM_addStyle(`
     div.cur-list::-webkit-scrollbar {
+        width: ${width}px;
+    }
+    `);
+    // 下面给合集类的视频进行适配
+    // https://www.bilibili.com/video/BV1Mb4y1p74R/
+    GM_addStyle(`
+    div.video-sections-content-list::-webkit-scrollbar {
         width: ${width}px;
     }
     `);
