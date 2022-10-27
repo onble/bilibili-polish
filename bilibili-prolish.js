@@ -148,19 +148,36 @@ function stop_single_page_continuously_play() {
     // 这个函数的作用是停止单视频的自动连播，这样不影响合集视频的自动连播
 
     // 监听视频播放完毕
-    const elevideo = document.querySelector("video");
+    let elevideo = document.querySelector("video");
+
     if (elevideo === null) {
-        check_console("没有找到停止连播的按钮");
-        return;
-    }
-    elevideo.addEventListener("ended", function () {
-        const cancel_continuously_play_button = document.querySelector(
-            ".bpx-player-ending-related-item-cancel"
-        );
-        if (!cancel_continuously_play_button) {
+        check_console("没有找到停止连播的按钮的盒子video");
+        elevideo = document.querySelector("bwp-video");
+        if (elevideo === null) {
+            // 适配目标： https://www.bilibili.com/video/BV1CK411377T/
+
+            check_console("也没有找到停止连播的按钮的盒子bwp-video");
             return;
         }
-        cancel_continuously_play_button.click();
+    }
+    elevideo.addEventListener("ended", function () {
+        let cancel_continuously_play_button = document.querySelector(
+            "div.bpx-player-ending-related-item-cancel"
+        );
+        if (!cancel_continuously_play_button) {
+            setTimeout(() => {
+                cancel_continuously_play_button = document.querySelector(
+                    "div.bpx-player-ending-related-item-cancel"
+                );
+                if (!cancel_continuously_play_button) {
+                    check_console("没有找到停止连播的按钮");
+                    return;
+                }
+                cancel_continuously_play_button.click();
+            }, 100);
+        } else {
+            cancel_continuously_play_button.click();
+        }
     });
 }
 function del_video_page_special_card() {
