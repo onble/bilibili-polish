@@ -24,7 +24,6 @@ function clear_object(object) {
     // 清理需要被清理的对象
 
     if (object.other_css !== undefined) {
-        console.log(object.other_css);
         GM_addStyle(`
         ${object.select} {
             display: none !important;
@@ -487,6 +486,27 @@ function space_page() {
         {
             select: "div.nav-user-center>div:last-child",
             name: "投稿按钮",
+        },
+        {
+            select: "ul.left-entry>li:not(:nth-child(1))",
+            name: "22-10-27更新 顶部左边番剧直播等入口",
+        },
+        {
+            select: "form#nav-searchform>div>input::placeholder",
+            name: "22-10-27更新 搜索栏的默认提示文字",
+            other_css: "color: rgba(0,0,0,0);",
+        },
+        {
+            select: "ul.right-entry>li.v-popover-wrap:nth-child(2)",
+            name: "22-10-27更新 大会员入口",
+        },
+        {
+            select: "ul.right-entry>li:nth-child(7)",
+            name: "22-10-27更新 创作中心入口",
+        },
+        {
+            select: "ul.right-entry>li:last-child",
+            name: "22-10-27更新 投稿按钮",
         },
     ];
     need_clear_objects.forEach((Element) => {
