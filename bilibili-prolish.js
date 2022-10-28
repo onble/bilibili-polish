@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.0.3
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -15,9 +15,9 @@
 var check = true;
 
 // 工具函数
-function check_console(msg) {
+function check_console(...msg) {
     if (check) {
-        console.log(`--->${msg}<---`);
+        console.log(`--->${[...msg]}<---`);
     }
 }
 function clear_object(object) {
@@ -42,7 +42,7 @@ function clear_object(object) {
 function stretch_collection_vodeo_list() {
     // 伸延合集
     // 适配目标案例: https://www.bilibili.com/video/BV1jT4y117Tn/
-    // 适配目标案例2： https://www.bilibili.com/video/BV1s64y187Vh
+
     const video_list = document.querySelector("div.video-sections-item");
     if (!video_list) {
         check_console("没有找到合集");
@@ -60,24 +60,49 @@ function stretch_collection_vodeo_list() {
         "div.video-sections-content-list"
     );
     let video_list_box_height = parseInt(video_list_box.style.height);
-    console.log("video_list_box_height", video_list_box_height);
-    if (window.isNaN(video_list_box_height)) {
-        video_list_box_height = 243; //243是推测的
-    }
-    // TODO:查找需求的最大高度
+    let limit_count = 10;
+    function change_height_by_sure_height(height) {
+        // 计算可扩展高度
+        let expandable_height =
+            window.innerHeight -
+            recommend_list.offsetTop -
+            recommend_list_position_father.offsetTop +
+            height;
+        const need_height = parseInt(
+            document.querySelector("div.video-section-list").style.height
+        );
+        if (need_height && expandable_height > need_height) {
+            expandable_height = need_height;
+        }
 
-    // 计算可扩展高度
-    let expandable_height =
-        window.innerHeight -
-        recommend_list.offsetTop -
-        recommend_list_position_father.offsetTop +
-        video_list_box_height;
-
-    GM_addStyle(`
+        GM_addStyle(`
         div.video-sections-content-list{
                 height: ${expandable_height}px !important;
                 max-height: none !important;
         }`);
+    }
+    if (window.isNaN(video_list_box_height)) {
+        const timer = setInterval(function () {
+            video_list_box_height = parseInt(video_list_box.offsetHeight);
+            if (!video_list_box_height) {
+                limit_count--;
+                if (limit_count < 0) {
+                    clearInterval(timer);
+                }
+                return;
+            } else {
+                clearInterval(timer);
+                check_console(
+                    `剩余${limit_count}次，offset=${video_list_box_height}`
+                );
+                change_height_by_sure_height(video_list_box_height);
+            }
+        }, 1000);
+    } else {
+        // TODO:查找需求的最大高度
+        // 适配目标案例2： https://www.bilibili.com/video/BV1s64y187Vh
+        change_height_by_sure_height(video_list_box_height);
+    }
 }
 function stretch_vodeo_choose_list() {
     // 伸展视频选集列表(带图片的列表)
@@ -507,6 +532,10 @@ function space_page() {
         {
             select: "ul.right-entry>li:last-child",
             name: "22-10-27更新 投稿按钮",
+        },
+        {
+            select: "ul.right-entry>li div.red-num--dynamic",
+            name: "22-10-27更新 动态的红点",
         },
     ];
     need_clear_objects.forEach((Element) => {
