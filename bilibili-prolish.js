@@ -99,7 +99,6 @@ function stretch_collection_vodeo_list() {
             }
         }, 1000);
     } else {
-        // TODO:查找需求的最大高度
         // 适配目标案例2： https://www.bilibili.com/video/BV1s64y187Vh
         change_height_by_sure_height(video_list_box_height);
     }
@@ -195,6 +194,14 @@ function stop_single_page_continuously_play() {
                 );
                 if (!cancel_continuously_play_button) {
                     check_console("没有找到停止连播的按钮");
+                    const continue_button = document.querySelector(
+                        "span.switch-button.on"
+                    );
+                    if (continue_button) {
+                        setTimeout(() => {
+                            stop_single_page_continuously_play();
+                        }, 2000);
+                    }
                     return;
                 }
                 cancel_continuously_play_button.click();
@@ -217,6 +224,7 @@ function del_video_page_special_card() {
     // 弹幕下面的小广告
     // 弹幕下面的新增加的小广告
     // 弹幕下面的大广告
+    // 2023/2/14 维护 右边栏最后的直播
     GM_addStyle(`
     .video-page-special-card {
         display: none;
@@ -238,6 +246,9 @@ function del_video_page_special_card() {
     }
     .ad-report{
         display: none !important;
+    }
+    .pop-live-small-mode{
+        display: none;
     }
     `);
     const adv_object = [
