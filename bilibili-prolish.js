@@ -167,6 +167,23 @@ function stretch_collection() {
     }
     `);
 }
+function stretch_picture_video_list() {
+    // 这个函数的作用是控制带图片的个人播放列表的显示高度
+
+    // 计算所需要的高度
+    // TODO:计算高度真费劲=-=
+    // 将最大限制移除
+    //         height: ${expandable_height}px !important;
+    GM_addStyle(`
+    #playlist-video-action-list{
+
+        max-height: none !important;
+    }
+    #playlist-video-action-list-body{
+        max-height: none !important;
+    }
+    `);
+}
 function stop_single_page_continuously_play() {
     // 这个函数的作用是停止单视频的自动连播，这样不影响合集视频的自动连播
 
@@ -354,6 +371,13 @@ function widen_list_scrollbar_width(width = 7) {
         width: ${width}px;
     }
     `);
+    // 下面给自己列表的合集类的视频进行适配
+    // https://www.bilibili.com/list/ml1611399001
+    GM_addStyle(`
+    #playlist-video-action-list::-webkit-scrollbar {
+        width: ${width}px;
+    }
+    `);
 }
 function display_share_new_box() {
     // 隐藏当鼠标hover在分享按钮上出现的新box
@@ -364,8 +388,26 @@ function display_share_new_box() {
     }
     `);
 }
+function display_send_info_to_up_button() {
+    // 隐藏给up发消息的按钮
+    // 维护时间 2023/2/14
+
+    GM_addStyle(`
+    a.up-info_right_message {
+        display: none;
+    }
+    `);
+
+    // 适配个人列表
+    // 目标案例:https://www.bilibili.com/list/ml1611399001
+    GM_addStyle(`
+    a.send-msg {
+        display: none;
+    }
+    `);
+}
 function change_video_below_toolbar() {
-    // TODO:这个函数的功能需要等待vue配合，该函数咱不可用
+    // TODO:这个函数的功能需要等待vue配合，该函数暂不可用
     // 更改视频下面的工具栏的显示布局
     return;
 
@@ -423,6 +465,7 @@ function video_page() {
     widen_list_scrollbar_width();
     video_box_add_box_shadow();
     display_share_new_box();
+    display_send_info_to_up_button();
     const oldOnload = window.onload;
     window.onload = function () {
         // 这里面放晚加载的函数
@@ -561,6 +604,43 @@ function space_page() {
         }
     };
 }
+function list_page() {
+    // 个人播放列表的适配
+    // 适配目标案例 https://www.bilibili.com/list/ml1611399001
+
+    clean_top_nav();
+    del_video_page_special_card();
+    // 因为上面的清理广告函数会影响右边栏目的高度，所以要注意这个函数与stretch_collection函数的先后顺序
+
+    display_bottom_fixed_comment();
+    display_right_bottom_customer_service();
+    display_send_info_to_up_button();
+    widen_list_scrollbar_width();
+    video_box_add_box_shadow();
+    //stretch_picture_video_list();
+    // 清理不需要的功能
+    const need_clear_objects = [
+        {
+            select: ".new-charge-btn",
+            name: "充电按钮",
+        },
+        {
+            select: "div.video-share-dropdown",
+            name: "分享的大框",
+        },
+    ];
+    need_clear_objects.forEach((Element) => {
+        clear_object(Element);
+    });
+
+    const oldOnload = window.onload;
+    window.onload = function () {
+        // 这里面放晚加载的函数
+        if (oldOnload) {
+            oldOnload();
+        }
+    };
+}
 (function () {
     "use strict";
 
@@ -572,5 +652,8 @@ function space_page() {
     }
     if (location.pathname.indexOf("medialist") != -1) {
         medialist_page();
+    }
+    if (location.pathname.indexOf("list") != -1) {
+        list_page();
     }
 })();
