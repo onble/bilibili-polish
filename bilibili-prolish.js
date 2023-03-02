@@ -130,6 +130,8 @@ function stretch_collection_vodeo_list() {
     // 伸延合集
     // 适配目标案例1: https://www.bilibili.com/video/BV1jT4y117Tn/
     // 适配目标案例2: https://www.bilibili.com/video/BV1s64y187Vh
+    // 适配目标案例3: 列表需求长度小于可扩展长度 https://www.bilibili.com/video/BV12T411J7ML/
+    // 适配目标案例4: 列表需求长度小于可扩展长度 https://www.bilibili.com/video/BV1jD4y1y78P/
     // 这代码写的好乱--
 
     const video_list = document.querySelector("div.video-sections-item");
