@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.3
+// @version      1.0.4
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -271,7 +271,8 @@ function stretch_collection() {
     }
     check_console("找到了视频列表元素");
     // 主要对 https://www.bilibili.com/video/BV17z4y1X7UZ 这样的页面进行适配
-    //选中下面的推荐视频列表
+    // 选中下面的推荐视频列表
+    const recommend_list = document.querySelector("#reco_list");
     // 计算可扩展高度
     let expandable_height =
         window.innerHeight -
