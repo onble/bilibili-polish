@@ -41,7 +41,9 @@ function clear_object(object) {
 
 function stretch_collection_vodeo_list() {
     // 伸延合集
-    // 适配目标案例: https://www.bilibili.com/video/BV1jT4y117Tn/
+    // 适配目标案例1: https://www.bilibili.com/video/BV1jT4y117Tn/
+    // 适配目标案例2: https://www.bilibili.com/video/BV1s64y187Vh
+    // 这代码写的好乱--
 
     const video_list = document.querySelector("div.video-sections-item");
     if (!video_list) {
@@ -52,10 +54,8 @@ function stretch_collection_vodeo_list() {
     //选中下面的推荐视频列表
     const recommend_list = document.querySelector("#reco_list");
     // 获取recomend_list的开了position的父元素
-    const recommend_list_position_father = document.querySelector(
-        "div.right-container"
-    );
-    // 获取当前盒子本身的元素
+    const top_bar = document.querySelector(".video-container-v1");
+    // 获取当前视频列表盒子本身的元素
     const video_list_box = document.querySelector(
         "div.video-sections-content-list"
     );
@@ -63,10 +63,12 @@ function stretch_collection_vodeo_list() {
     let limit_count = 10;
     function change_height_by_sure_height(height) {
         // 计算可扩展高度
+        // 可扩展高度 = 屏幕的高度 - 下面推荐列表的高度位置 - 顶部横栏的高度 + 需要的高度
+        // 这个顶部横栏是最上面的，带有搜索框的固定在最上面的横栏
         let expandable_height =
             window.innerHeight -
             recommend_list.offsetTop -
-            recommend_list_position_father.offsetTop +
+            top_bar.offsetTop +
             height;
         const need_height = parseInt(
             document.querySelector("div.video-section-list").style.height
@@ -74,7 +76,17 @@ function stretch_collection_vodeo_list() {
         if (need_height && expandable_height > need_height) {
             expandable_height = need_height;
         }
-
+        check_console(
+            `可扩展高度${expandable_height} = 屏幕的高度${window.innerHeight} - 下面推荐列表的高度位置${recommend_list.offsetTop} - 顶部横栏的高度${top_bar.offsetTop} + 需要的高度${height}
+            需要高度:${need_height}
+            `
+        );
+        // 如果需要高度还没加载进来，下面需要再多次调用
+        if (window.isNaN(need_height)) {
+            check_console("列表需求高度还未确定");
+            // TODO:如何再次动态修改列表的高度
+        }
+        // TODO:尝试更改高度时候使用平滑的增长效果
         GM_addStyle(`
         div.video-sections-content-list{
                 height: ${expandable_height}px !important;
@@ -82,12 +94,15 @@ function stretch_collection_vodeo_list() {
         }`);
     }
     if (window.isNaN(video_list_box_height)) {
+        check_console("这是一个找不到列表盒子高度的情况");
+        // 下面就是循环去找盒子的高度
         const timer = setInterval(function () {
             video_list_box_height = parseInt(video_list_box.offsetHeight);
             if (!video_list_box_height) {
                 limit_count--;
                 if (limit_count < 0) {
                     clearInterval(timer);
+                    check_console("循环检测次数用完，效果未生效");
                 }
                 return;
             } else {
@@ -99,6 +114,7 @@ function stretch_collection_vodeo_list() {
             }
         }, 1000);
     } else {
+        check_console("这是能够找到列表盒子高度的情况");
         // 适配目标案例2： https://www.bilibili.com/video/BV1s64y187Vh
         change_height_by_sure_height(video_list_box_height);
     }
@@ -295,6 +311,20 @@ function clean_top_nav() {
     }
     `);
     // TODO: 应该尝试如何抓取异步加入的搜索框
+    /* // 增强修改搜索框
+    // 参考https://www.bilibili.com/video/BV1gZ4y1u7Z1
+    // 执行状态：无效，需要动态绑定
+    let clear_watcher_max_count = 5;
+    let clear_watcher = setInterval(() => {
+        if (clear_watcher_max_count < 0) {
+            clearInterval(clear_watcher);
+        }
+        clear_watcher_max_count--;
+        // 获取输入框
+        let input_box = document.querySelector(".nav-search-input");
+        input_box.setAttribute("placeholder", "");
+        console.log("im done");
+    }, 100); */
     // 清理搜素框中的热搜
     GM_addStyle(`
     .trending {
