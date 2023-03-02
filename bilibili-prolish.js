@@ -159,7 +159,7 @@ function stretch_collection_vodeo_list() {
             recommend_list.offsetTop -
             top_bar_next_container.offsetTop +
             height;
-        const need_height = parseInt(
+        let need_height = parseInt(
             document.querySelector("div.video-section-list").style.height
         );
         if (need_height && expandable_height > need_height) {
@@ -171,16 +171,38 @@ function stretch_collection_vodeo_list() {
             `
         );
         // 如果需要高度还没加载进来，下面需要再多次调用
-        if (window.isNaN(need_height)) {
+        if (window.isNaN(need_height) && limit_count > 0) {
             check_console("列表需求高度还未确定");
             // TODO:如何再次动态修改列表的高度
-        }
-        // TODO:尝试更改高度时候使用平滑的增长效果
-        GM_addStyle(`
+            // 下面就是循环去找需求的高度
+            const timer = setInterval(function () {
+                need_height = parseInt(
+                    document.querySelector("div.video-section-list").style
+                        .height
+                );
+                if (!need_height) {
+                    limit_count--;
+                    if (limit_count < 0) {
+                        clearInterval(timer);
+                        check_console("循环检测次数用完，效果未生效");
+                    }
+                    return;
+                } else {
+                    clearInterval(timer);
+                    check_console(
+                        `剩余${limit_count}次，需求高度=${need_height}`
+                    );
+                    change_height_by_sure_height(height);
+                }
+            }, 1000);
+        } else {
+            // TODO:尝试更改高度时候使用平滑的增长效果
+            GM_addStyle(`
         div.video-sections-content-list{
                 height: ${expandable_height}px !important;
                 max-height: none !important;
         }`);
+        }
     }
     if (window.isNaN(video_list_box_height)) {
         check_console("这是一个找不到列表盒子高度的情况");
@@ -248,7 +270,6 @@ function stretch_collection() {
     check_console("找到了视频列表元素");
     // 主要对 https://www.bilibili.com/video/BV17z4y1X7UZ 这样的页面进行适配
     //选中下面的推荐视频列表
-    const recommend_list = document.querySelector("#reco_list");
     // 计算可扩展高度
     let expandable_height =
         window.innerHeight -
