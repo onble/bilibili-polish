@@ -641,6 +641,12 @@ function list_page() {
         }
     };
 }
+function history_page() {
+    // 个人历史记录页面的适配
+    // 适配目标案例 https://www.bilibili.com/account/history
+
+    clean_top_nav();
+}
 (function () {
     "use strict";
 
@@ -655,5 +661,8 @@ function list_page() {
     }
     if (location.pathname.indexOf("list") != -1) {
         list_page();
+    }
+    if (location.pathname.indexOf("history") != -1) {
+        history_page();
     }
 })();
