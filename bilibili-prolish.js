@@ -39,6 +39,93 @@ function clear_object(object) {
     `);
 }
 
+function list_page_stretch_vodeo_choose_list() {
+    // 为list页面进行列表选择适配
+    // 适配目标案例1: https://www.bilibili.com/list/ml1337156501
+
+    const video_list = document.querySelector(
+        "#playlist-video-action-list-body"
+    );
+    if (!video_list) {
+        check_console("没有找到视频列表");
+        return;
+    }
+    check_console("找到了视频列表");
+    //选中下面的推荐视频列表
+    const recommend_list = document.querySelector(".recommend-list-container");
+    // 获取recomend_list的开了position的父元素
+    const top_bar_next_container = document.querySelector(
+        ".playlist-container"
+    );
+    // 获取当前视频列表盒子本身的元素
+    const video_list_box = document.querySelector(
+        "#playlist-video-action-list-body"
+    );
+    let video_list_box_height = parseInt(video_list_box.style.height);
+    let limit_count = 10;
+    function change_height_by_sure_height(height) {
+        // 计算可扩展高度
+        // 可扩展高度 = 屏幕的高度 - 下面推荐列表的高度位置 - 顶部横栏的高度 + 需要的高度 + 推荐列表的上外边距
+        // 这个顶部横栏是最上面的，带有搜索框的固定在最上面的横栏
+        let expandable_height =
+            window.innerHeight -
+            recommend_list.offsetTop -
+            top_bar_next_container.offsetTop +
+            height +
+            22;
+        const need_height = parseInt(
+            document.querySelector(".action-list-inner").style.height
+        );
+        if (need_height && expandable_height > need_height) {
+            expandable_height = need_height;
+        }
+        check_console(
+            `可扩展高度${expandable_height} = 屏幕的高度${window.innerHeight} - 下面推荐列表的高度位置${recommend_list.offsetTop} - 顶部横栏的高度${top_bar_next_container.offsetTop} + 需要的高度${height} + 推荐列表的上外边距 22
+            需要高度:${need_height}
+            `
+        );
+        // 如果需要高度还没加载进来，下面需要再多次调用
+        if (window.isNaN(need_height)) {
+            check_console("列表需求高度还未确定");
+            // TODO:如何再次动态修改列表的高度
+        }
+        // TODO:尝试更改高度时候使用平滑的增长效果
+        GM_addStyle(`
+        div#playlist-video-action-list{
+                height: ${expandable_height}px !important;
+                max-height: none !important;
+        }
+        #playlist-video-action-list-body{
+                max-height: none !important;
+        }`);
+    }
+    if (window.isNaN(video_list_box_height)) {
+        check_console("这是一个找不到列表盒子高度的情况");
+        // 下面就是循环去找盒子的高度
+        const timer = setInterval(function () {
+            video_list_box_height = parseInt(video_list_box.offsetHeight);
+            if (!video_list_box_height) {
+                limit_count--;
+                if (limit_count < 0) {
+                    clearInterval(timer);
+                    check_console("循环检测次数用完，效果未生效");
+                }
+                return;
+            } else {
+                clearInterval(timer);
+                check_console(
+                    `剩余${limit_count}次，offset=${video_list_box_height}`
+                );
+                change_height_by_sure_height(video_list_box_height);
+            }
+        }, 1000);
+    } else {
+        check_console("这是能够找到列表盒子高度的情况");
+        // 适配目标案例2： https://www.bilibili.com/video/BV1s64y187Vh
+        change_height_by_sure_height(video_list_box_height);
+    }
+}
+
 function stretch_collection_vodeo_list() {
     // 伸延合集
     // 适配目标案例1: https://www.bilibili.com/video/BV1jT4y117Tn/
@@ -54,7 +141,9 @@ function stretch_collection_vodeo_list() {
     //选中下面的推荐视频列表
     const recommend_list = document.querySelector("#reco_list");
     // 获取recomend_list的开了position的父元素
-    const top_bar = document.querySelector(".video-container-v1");
+    const top_bar_next_container = document.querySelector(
+        ".video-container-v1"
+    );
     // 获取当前视频列表盒子本身的元素
     const video_list_box = document.querySelector(
         "div.video-sections-content-list"
@@ -68,7 +157,7 @@ function stretch_collection_vodeo_list() {
         let expandable_height =
             window.innerHeight -
             recommend_list.offsetTop -
-            top_bar.offsetTop +
+            top_bar_next_container.offsetTop +
             height;
         const need_height = parseInt(
             document.querySelector("div.video-section-list").style.height
@@ -77,7 +166,7 @@ function stretch_collection_vodeo_list() {
             expandable_height = need_height;
         }
         check_console(
-            `可扩展高度${expandable_height} = 屏幕的高度${window.innerHeight} - 下面推荐列表的高度位置${recommend_list.offsetTop} - 顶部横栏的高度${top_bar.offsetTop} + 需要的高度${height}
+            `可扩展高度${expandable_height} = 屏幕的高度${window.innerHeight} - 下面推荐列表的高度位置${recommend_list.offsetTop} - 顶部横栏的高度${top_bar_next_container.offsetTop} + 需要的高度${height}
             需要高度:${need_height}
             `
         );
@@ -669,6 +758,8 @@ function list_page() {
         if (oldOnload) {
             oldOnload();
         }
+
+        list_page_stretch_vodeo_choose_list();
     };
 }
 function history_page() {
