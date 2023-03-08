@@ -771,6 +771,10 @@ function list_page() {
             select: "div.video-share-dropdown",
             name: "分享的大框",
         },
+        {
+            select: ".following-charge-btn",
+            name: "已经关注的充电按钮",
+        },
     ];
     need_clear_objects.forEach((Element) => {
         clear_object(Element);
