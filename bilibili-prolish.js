@@ -462,6 +462,24 @@ function clean_top_nav() {
         display: none;
     }
     `);
+    //移动动态的详情往左，防止显示不全
+    GM_addStyle(`
+    a[href="//t.bilibili.com/"]+div.is-bottom {
+        margin-left: -40px !important;
+    }
+    `);
+    //移动收藏的详情往左，防止显示不全
+    GM_addStyle(`
+    a[href*="space"]+div.is-bottom {
+        margin-left: -170px !important;
+    }
+    `);
+    //移动历史的详情往左，防止显示不全
+    GM_addStyle(`
+    a[href*="history"]+div.is-bottom {
+        margin-left: -138px !important;
+    }
+    `);
 }
 function display_bottom_fixed_comment() {
     // 隐藏下面粘性定位在下面的发表评论功能
