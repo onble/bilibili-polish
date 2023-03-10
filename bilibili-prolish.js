@@ -512,6 +512,13 @@ function display_right_bottom_customer_service() {
         display: none;
     }
     `);
+
+    // 2023年3月10日更新dom结构
+    GM_addStyle(`
+    a[title="帮助反馈"] {
+        display: none !important;
+    }
+    `);
 }
 function video_box_add_box_shadow() {
     // 给播放器和下面的控制弹幕盒子加一个重阴影，将将两者关联起来
