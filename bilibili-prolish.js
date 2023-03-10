@@ -11,6 +11,8 @@
 // @run-at document-start
 // ==/UserScript==
 
+// TODO:给添加style封装成缓存后统一添加的函数
+
 // 控制参数
 var check = true;
 
@@ -478,6 +480,18 @@ function clean_top_nav() {
     GM_addStyle(`
     a[href*="history"]+div.is-bottom {
         margin-left: -138px !important;
+    }
+    `);
+    // 更改动态和历史详情页的滑块宽度
+    GM_addStyle(`
+    .history-panel-popover .header-tabs-panel__content::-webkit-scrollbar, .dynamic-panel-popover .header-tabs-panel__content::-webkit-scrollbar {
+        width: 7px !important;
+    }
+    `);
+    // 更改收藏详情页的滑块宽度
+    GM_addStyle(`
+    .favorite-panel-popover__content .content-scroll::-webkit-scrollbar, .favorite-panel-popover__nav::-webkit-scrollbar {
+        width: 7px !important;
     }
     `);
 }
