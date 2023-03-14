@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.5
+// @version      1.0.6
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -777,6 +777,37 @@ function space_page() {
     need_clear_objects.forEach((Element) => {
         clear_object(Element);
     });
+
+    //移动动态的详情往左，防止显示不全
+    GM_addStyle(`
+    a[href="//t.bilibili.com/"]+div.is-bottom {
+        margin-left: -40px !important;
+    }
+    `);
+    //移动收藏的详情往左，防止显示不全
+    GM_addStyle(`
+    a[href*="space"]+div.is-bottom {
+        margin-left: -170px !important;
+    }
+    `);
+    //移动历史的详情往左，防止显示不全
+    GM_addStyle(`
+    a[href*="history"]+div.is-bottom {
+        margin-left: -138px !important;
+    }
+    `);
+    // 更改动态和历史详情页的滑块宽度
+    GM_addStyle(`
+    .history-panel-popover .header-tabs-panel__content::-webkit-scrollbar, .dynamic-panel-popover .header-tabs-panel__content::-webkit-scrollbar {
+        width: 7px !important;
+    }
+    `);
+    // 更改收藏详情页的滑块宽度
+    GM_addStyle(`
+    .favorite-panel-popover__content .content-scroll::-webkit-scrollbar, .favorite-panel-popover__nav::-webkit-scrollbar {
+        width: 7px !important;
+    }
+    `);
 
     const oldOnload = window.onload;
     window.onload = function () {
