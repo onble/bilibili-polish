@@ -576,6 +576,12 @@ function display_share_new_box() {
         display: none;
     }
     `);
+
+    GM_addStyle(`
+    div.video-share-dropdown {
+        display: none!important;
+    }
+    `);
 }
 function display_send_info_to_up_button() {
     // 隐藏给up发消息的按钮
