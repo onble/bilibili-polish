@@ -6,6 +6,7 @@
 // @author       onble
 // @match        https://www.bilibili.com/*
 // @match        https://space.bilibili.com/*
+// @match        https://search.bilibili.com/*
 // @icon         https://static.thenounproject.com/png/3355755-200.png
 // @grant        GM_addStyle
 // @run-at document-start
@@ -452,6 +453,14 @@ function clean_top_nav() {
         display: none;
     }
     `);
+
+    // 清理已经是大会员的人的会员入口
+    GM_addStyle(`
+    .right-entry a[href='//account.bilibili.com/big'] {
+        display: none;
+    }
+    `);
+
     // 清理创作中心与投稿
     GM_addStyle(`
     .right-entry-item {
@@ -896,5 +905,8 @@ function history_page() {
     }
     if (location.pathname.indexOf("history") != -1) {
         history_page();
+    }
+    if (location.host.indexOf("search") != -1) {
+        clean_top_nav();
     }
 })();
