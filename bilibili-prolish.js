@@ -537,6 +537,13 @@ function display_charge_button() {
         display: none !important;
     }
     `);
+
+    // 新的充电按钮
+    GM_addStyle(`
+    .new-charge-btn {
+        display: none !important;
+    }
+    `);
 }
 function widen_list_scrollbar_width(width = 7) {
     // 拓宽右边列表右侧的滑动块的宽度
