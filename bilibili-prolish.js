@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.6
+// @version      1.0.7
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -888,6 +888,42 @@ function history_page() {
 
     clean_top_nav();
 }
+function bangumi_page() {
+    clean_top_nav();
+    display_bottom_fixed_comment();
+    display_right_bottom_customer_service();
+    video_box_add_box_shadow();
+    // 清理不需要的功能
+    const need_clear_objects = [
+        {
+            select: ".vipPaybar_container__GsBut",
+            name: "查看会员全部权利按钮",
+        },
+        {
+            select: "div.Share_share__mQAWY",
+            name: "分享的大框",
+        },
+        {
+            select: ".navTools_floatNavExp__fCiyO",
+            name: "右侧的新旧版本切换",
+        },
+        {
+            select: ".toolbar>span:nth-child(4)",
+            name: "使用手机观看",
+        },
+        {
+            select: "#eplist_module",
+            name: "周边视频",
+        },
+        {
+            select: "#ogv-weslie-media-info-review",
+            name: "打分组件",
+        },
+    ];
+    need_clear_objects.forEach((Element) => {
+        clear_object(Element);
+    });
+}
 (function () {
     "use strict";
 
@@ -908,5 +944,8 @@ function history_page() {
     }
     if (location.host.indexOf("search") != -1) {
         clean_top_nav();
+    }
+    if (location.pathname.indexOf("bangumi") != -1) {
+        bangumi_page();
     }
 })();
