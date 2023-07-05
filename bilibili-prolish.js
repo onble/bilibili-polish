@@ -411,6 +411,12 @@ function del_video_page_special_card() {
     });
 }
 function clean_top_nav() {
+    // 控制此函数只执行一次
+    // if (document.once_clean_top_nav) {
+    //     return;
+    // } else {
+    //     document.once_clean_top_nav = true;
+    // }
     // 清理顶部导航栏
 
     // 因为顶部导航栏的一些功能不常用，所以进行清理
@@ -794,6 +800,10 @@ function space_page() {
         {
             select: "ul.right-entry>li div.red-num--dynamic",
             name: "22-10-27更新 动态的红点",
+        },
+        {
+            select: ".right-entry a[href='//account.bilibili.com/big']",
+            name: "23-7-5更新 大会员入口",
         },
     ];
     need_clear_objects.forEach((Element) => {
