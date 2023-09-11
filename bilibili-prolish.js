@@ -567,6 +567,15 @@ function display_charge_button() {
     }
     `);
 }
+function display_copyright_span() {
+    // 隐藏视频窗口上的版权提示文字
+
+    GM_addStyle(`
+    span.copyright {
+        display: none !important;
+    }
+    `);
+}
 function widen_list_scrollbar_width(width = 7) {
     // 拓宽右边列表右侧的滑动块的宽度
 
@@ -703,6 +712,7 @@ function video_page() {
     display_send_info_to_up_button();
     display_vote_window();
     display_ad_window();
+    display_copyright_span();
     const oldOnload = window.onload;
     window.onload = function () {
         // 这里面放晚加载的函数
