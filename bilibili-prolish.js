@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.7
+// @version      1.0.8
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -667,6 +667,15 @@ function change_video_below_toolbar() {
         document.querySelector("div.note-btn.note-btn__blue");
     });
 }
+function display_vote_window() {
+    // 隐藏视频中的投票框
+
+    GM_addStyle(`
+    div.bili-vote {
+        display: none;
+    }
+    `);
+}
 function video_page() {
     // 在video页面进行的操作
     // 适配案例 https://www.bilibili.com/video/BV16a411d72j/
@@ -683,6 +692,7 @@ function video_page() {
     video_box_add_box_shadow();
     display_share_new_box();
     display_send_info_to_up_button();
+    display_vote_window();
     const oldOnload = window.onload;
     window.onload = function () {
         // 这里面放晚加载的函数
