@@ -562,7 +562,7 @@ function display_charge_button() {
 
     // 23-7-5新的充电按钮
     GM_addStyle(`
-    .following-charge-btn,old-charge-btn {
+    .following-charge-btn,.old-charge-btn {
         display: none !important;
     }
     `);
@@ -676,6 +676,15 @@ function display_vote_window() {
     }
     `);
 }
+function display_ad_window() {
+    // 隐藏视频中的广告推广框
+
+    GM_addStyle(`
+    div.bpx-player-skipcard {
+        display: none;
+    }
+    `);
+}
 function video_page() {
     // 在video页面进行的操作
     // 适配案例 https://www.bilibili.com/video/BV16a411d72j/
@@ -693,6 +702,7 @@ function video_page() {
     display_share_new_box();
     display_send_info_to_up_button();
     display_vote_window();
+    display_ad_window();
     const oldOnload = window.onload;
     window.onload = function () {
         // 这里面放晚加载的函数
