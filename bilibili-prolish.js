@@ -694,6 +694,15 @@ function display_ad_window() {
     }
     `);
 }
+function display_three_consecutive_window() {
+    // 隐藏视频中的三连窗口,真讨厌,有什么毛病吧
+
+    GM_addStyle(`
+    div.bili-guide-all {
+        display: none!important;
+    }
+    `);
+}
 function video_page() {
     // 在video页面进行的操作
     // 适配案例 https://www.bilibili.com/video/BV16a411d72j/
@@ -713,6 +722,7 @@ function video_page() {
     display_vote_window();
     display_ad_window();
     display_copyright_span();
+    display_three_consecutive_window();
     const oldOnload = window.onload;
     window.onload = function () {
         // 这里面放晚加载的函数
