@@ -696,9 +696,13 @@ function display_ad_window() {
 }
 function display_three_consecutive_window() {
     // 隐藏视频中的三连窗口,真讨厌,有什么毛病吧
-
     GM_addStyle(`
     div.bili-guide-all {
+        display: none!important;
+    }
+    `);
+    GM_addStyle(`
+    div.bpx-player-cmd-dm-inside {
         display: none!important;
     }
     `);
