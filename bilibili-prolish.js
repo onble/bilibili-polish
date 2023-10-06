@@ -509,6 +509,12 @@ function clean_top_nav() {
         width: 7px !important;
     }
     `);
+    // 清理头像子菜单里面的大会员购买广告
+    GM_addStyle(`
+    .vip-entry-containter {
+        display: none !important;
+    }
+    `);
 }
 function display_bottom_fixed_comment() {
     // 隐藏下面粘性定位在下面的发表评论功能
@@ -634,6 +640,13 @@ function display_send_info_to_up_button() {
 }
 function change_video_below_toolbar() {
     // TODO:这个函数的功能需要等待vue配合，该函数暂不可用
+    // TODO:尝试将这些代码进行模块化打包
+    // toolbar-right-complaint
+    GM_addStyle(`
+    .toolbar-right-complaint {
+        display: none;
+    }
+    `);
     // 更改视频下面的工具栏的显示布局
     return;
 
@@ -735,7 +748,7 @@ function video_page() {
         }
 
         stretch_collection();
-        // change_video_below_toolbar();
+        change_video_below_toolbar();
         stop_single_page_continuously_play();
     };
 }
