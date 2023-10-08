@@ -619,6 +619,13 @@ function display_share_new_box() {
         display: none!important;
     }
     `);
+
+    // 隐藏外面的白框和阴影
+    GM_addStyle(`
+    .van-popover.video-share-popover {
+        display: none!important;
+    }
+    `);
 }
 function display_send_info_to_up_button() {
     // 隐藏给up发消息的按钮
