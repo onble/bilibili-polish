@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         修改我的B站显示效果
 // @namespace    http://tampermonkey.net/
-// @version      1.0.8
+// @version      1.0.9
 // @description  try to take over the world!
 // @author       onble
 // @match        https://www.bilibili.com/*
@@ -487,6 +487,7 @@ function clean_top_nav() {
     `);
     //移动收藏的详情往左，防止显示不全
     GM_addStyle(`
+    #biliMainHeader > div > div > ul.right-entry > li:nth-child(5) > div.v-popover.is-bottom,
     a[href*="space"]+div.is-bottom {
         margin-left: -170px !important;
     }
@@ -876,6 +877,10 @@ function space_page() {
             select: ".right-entry a[href='//account.bilibili.com/big']",
             name: "23-7-5更新 大会员入口",
         },
+        {
+            select: ".vip-entry-containter",
+            name: "头像子菜单里面的大会员购买广告",
+        },
     ];
     need_clear_objects.forEach((Element) => {
         clear_object(Element);
@@ -889,6 +894,7 @@ function space_page() {
     `);
     //移动收藏的详情往左，防止显示不全
     GM_addStyle(`
+    #biliMainHeader > div > div > ul.right-entry > li:nth-child(5) > div.v-popover.is-bottom,
     a[href*="space"]+div.is-bottom {
         margin-left: -170px !important;
     }
