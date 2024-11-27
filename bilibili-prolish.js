@@ -426,12 +426,18 @@ function clean_top_nav() {
         display: none;
     }
     `);
-    // 然后清理搜素框
+    // 然后清理搜索框
     GM_addStyle(`
     #nav-searchform>div.nav-search-content>input::placeholder {
         color: rgba(0,0,0,0);
     }
     `);
+    // 清理搜索框的placeholder
+    // GM_addStyle(`
+    //     #nav-searchform>div.nav-search-content>input {
+    //         pointer-events: none;
+    //     }
+    //     `);
     // TODO: 应该尝试如何抓取异步加入的搜索框
     /* // 增强修改搜索框
     // 参考https://www.bilibili.com/video/BV1gZ4y1u7Z1
